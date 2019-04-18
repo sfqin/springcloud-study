@@ -30,7 +30,7 @@ public class OrderController {
 
         Object forObject = restTemplate.getForObject("http://product-module/v1/find?id=" + productId, Object.class);
 
-        System.out.println("从商品模块查询到查询到 => "+ forObject);
+        System.out.println("/v1/order => 从商品模块查询到查询到 => "+ forObject);
 
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setOrderNo(UUID.randomUUID().toString());
@@ -46,6 +46,9 @@ public class OrderController {
     public Object save1(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
 
         String byId = productClient.findById(productId);
+
+        System.out.println("/v2/order => 从商品模块查询到查询到 => "+ byId);
+
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setOrderNo(UUID.randomUUID().toString());
 

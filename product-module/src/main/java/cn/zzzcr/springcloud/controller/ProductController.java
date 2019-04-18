@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.TimeUnit;
+
 @RestController
 public class ProductController {
 
@@ -22,8 +24,13 @@ public class ProductController {
     }
 
     @GetMapping("/v1/find")
-    public Object find(@RequestParam("id") Integer id){
+    public Object find(@RequestParam("id") Integer id) throws InterruptedException {
         System.out.println("我是port:"+ port + " 有人调用我=> id="+id);
+
+        if(id == 3){
+            TimeUnit.SECONDS.sleep(3);
+        }
+
         return productService.findById(id);
     }
 }

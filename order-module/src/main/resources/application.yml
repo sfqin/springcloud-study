@@ -13,5 +13,9 @@ spring:
 PRODUCT-MODULE:
   ribbon:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
-
-
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 2000
