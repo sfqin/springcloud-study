@@ -1,6 +1,7 @@
 package cn.zzzcr.springcloud.controller;
 
 import cn.zzzcr.springcloud.model.OrderInfo;
+import cn.zzzcr.springcloud.service.ProductClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,15 +17,18 @@ public class OrderController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ProductClient productClient;
+
     @GetMapping("/hello")
     public String hello(){
         return "order hello";
     }
 
-    @GetMapping("/order")
+    @GetMapping("/v1/order")
     public Object save(@RequestParam("user_id")String userId, @RequestParam("product_id") String productId){
 
-        Object forObject = restTemplate.getForObject("http://product-module/find?id=" + productId, Object.class);
+        Object forObject = restTemplate.getForObject("http://product-module/v1/find?id=" + productId, Object.class);
 
         System.out.println("从商品模块查询到查询到 => "+ forObject);
 
@@ -32,6 +36,20 @@ public class OrderController {
         orderInfo.setOrderNo(UUID.randomUUID().toString());
 
         orderInfo.setProductInfo(forObject);
+        orderInfo.setUserId(userId);
+        return orderInfo;
+
+    }
+
+
+    @GetMapping("/v2/order")
+    public Object save1(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
+
+        String byId = productClient.findById(productId);
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setOrderNo(UUID.randomUUID().toString());
+
+        orderInfo.setProductInfo(byId);
         orderInfo.setUserId(userId);
         return orderInfo;
 

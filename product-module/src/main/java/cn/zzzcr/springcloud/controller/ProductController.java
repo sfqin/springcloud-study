@@ -21,9 +21,9 @@ public class ProductController {
         return "product hello";
     }
 
-    @GetMapping("/find")
+    @GetMapping("/v1/find")
     public Object find(@RequestParam("id") Integer id){
-        System.out.println("我是port:"+ port + " 有人调用我");
+        System.out.println("我是port:"+ port + " 有人调用我=> id="+id);
         return productService.findById(id);
     }
 }
