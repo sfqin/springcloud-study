@@ -9,6 +9,8 @@ eureka:
 spring:
   application:
     name: order-module
+  main:
+    allow-bean-definition-overriding: true
 # 添加负载均衡策略 RandomRule（随机，默认策略） RoundRobinRule（轮询） BestAvailableRule（最小并发）
 PRODUCT-MODULE:
   ribbon:
@@ -19,3 +21,5 @@ feign:
       default:
         connectTimeout: 2000
         readTimeout: 2000
+  hystrix:
+    enabled: true

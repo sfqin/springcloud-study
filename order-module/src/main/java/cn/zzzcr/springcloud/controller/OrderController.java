@@ -1,6 +1,7 @@
 package cn.zzzcr.springcloud.controller;
 
 import cn.zzzcr.springcloud.model.OrderInfo;
+import cn.zzzcr.springcloud.service.HystrixProClient;
 import cn.zzzcr.springcloud.service.ProductClient;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class OrderController {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private HystrixProClient hystrixProClient;
 
     @GetMapping("/hello")
     public String hello(){
@@ -48,14 +52,14 @@ public class OrderController {
     @GetMapping("/v2/order")
     public Object save1(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
 
-        String byId = productClient.findById(productId);
+        Object forObject = restTemplate.getForObject("http://product-module/v1/find?id=" + productId, Object.class);
 
-        System.out.println("/v2/order => 从商品模块查询到查询到 => "+ byId);
+        System.out.println("/v2/order => 从商品模块查询到查询到 => "+ forObject);
 
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setOrderNo(UUID.randomUUID().toString());
 
-        orderInfo.setProductInfo(byId);
+        orderInfo.setProductInfo(forObject);
         orderInfo.setUserId(userId);
         return orderInfo;
 
@@ -93,6 +97,22 @@ public class OrderController {
         msg.put("code", -1);
         msg.put("msg", "抢购人数太多，您被挤出来了，稍等重试");
         return msg;
+    }
+
+    @GetMapping("/v4/order")
+    public Object save3(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
+
+        String productInfo = hystrixProClient.findById(productId);
+
+        System.out.println("/v4/order => 从商品模块查询到查询到 => "+ productInfo);
+
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setOrderNo(UUID.randomUUID().toString());
+
+        orderInfo.setProductInfo(productInfo);
+        orderInfo.setUserId(userId);
+        return orderInfo;
+
     }
 
 }
