@@ -1,0 +1,14 @@
+
+/target/
+.mvn/
+mvn*
+
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*/target/
+log/
+*.log
