@@ -1,7 +1,6 @@
 server:
   port: 8877
 
-
 eureka:
   client:
     serviceUrl:
@@ -17,6 +16,14 @@ spring:
     port: 6379
     timeout: 2000ms
     password: 123
+  zipkin:
+    base-url: http://127.0.0.1:9411/
+    enabled: true
+
+  sleuth:
+    sampler:
+      probability: 1.0
+    enabled: false
 # 添加负载均衡策略 RandomRule（随机，默认策略） RoundRobinRule（轮询） BestAvailableRule（最小并发）
 PRODUCT-MODULE:
   ribbon:
