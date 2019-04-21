@@ -3,6 +3,7 @@ package cn.zzzcr.springcloud.controller;
 import cn.zzzcr.springcloud.model.OrderInfo;
 import cn.zzzcr.springcloud.service.HystrixProClient;
 import cn.zzzcr.springcloud.service.ProductClient;
+import cn.zzzcr.springcloud.service.RedisMonitorHystrixProClient;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +28,21 @@ public class OrderController {
     @Autowired
     private HystrixProClient hystrixProClient;
 
+    @Autowired
+    private RedisMonitorHystrixProClient redisMonitorHystrixProClient;
+
+
     @GetMapping("/hello")
     public String hello(){
         return "order hello";
     }
 
+    /**
+     * 模拟普通的远程调用是否成功
+     * @param userId
+     * @param productId
+     * @return
+     */
     @GetMapping("/v1/order")
     public Object save(@RequestParam("user_id")String userId, @RequestParam("product_id") String productId){
 
@@ -48,7 +59,12 @@ public class OrderController {
 
     }
 
-
+    /**
+     * 使用 ribbon 进行负载均衡调用
+     * @param userId
+     * @param productId
+     * @return
+     */
     @GetMapping("/v2/order")
     public Object save1(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
 
@@ -65,6 +81,12 @@ public class OrderController {
 
     }
 
+    /**
+     * 使用 Feign 进行负载均衡调用并且 指定调用出错后的执行方法
+     * @param userId
+     * @param productId
+     * @return
+     */
     @GetMapping("/v3/order")
     @HystrixCommand(fallbackMethod = "errorOrder")
     public Object save2(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
@@ -99,12 +121,41 @@ public class OrderController {
         return msg;
     }
 
+    /**
+     * Hystrix 结合 Feign 提供申明式的调用错误后的执行方法
+     * @param userId
+     * @param productId
+     * @return
+     */
     @GetMapping("/v4/order")
     public Object save3(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
 
         String productInfo = hystrixProClient.findById(productId);
 
         System.out.println("/v4/order => 从商品模块查询到查询到 => "+ productInfo);
+
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setOrderNo(UUID.randomUUID().toString());
+
+        orderInfo.setProductInfo(productInfo);
+        orderInfo.setUserId(userId);
+        return orderInfo;
+
+    }
+
+    /**
+     * 调用失败后进行报警通知 并且执行兜底操作
+     * @param userId
+     * @param productId
+     * @return
+     */
+    @GetMapping("/v5/order")
+    public Object save4(@RequestParam("user_id")String userId, @RequestParam("product_id") Integer productId){
+
+
+        String productInfo = redisMonitorHystrixProClient.findById(productId);
+
+        System.out.println("/v5/order => 从商品模块查询到查询到 => "+ productInfo);
 
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setOrderNo(UUID.randomUUID().toString());

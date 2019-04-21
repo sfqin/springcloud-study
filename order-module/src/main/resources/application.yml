@@ -11,6 +11,12 @@ spring:
     name: order-module
   main:
     allow-bean-definition-overriding: true
+  redis:
+    database: 0
+    host: 192.168.19.10
+    port: 6379
+    timeout: 2000ms
+    password: 123
 # 添加负载均衡策略 RandomRule（随机，默认策略） RoundRobinRule（轮询） BestAvailableRule（最小并发）
 PRODUCT-MODULE:
   ribbon:
@@ -23,3 +29,8 @@ feign:
         readTimeout: 2000
   hystrix:
     enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
