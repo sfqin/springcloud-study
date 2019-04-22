@@ -8,7 +8,6 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,9 +33,6 @@ public class OrderController {
 
     @Autowired
     private RedisMonitorHystrixProClient redisMonitorHystrixProClient;
-
-    @Value("${spring.zipkin.enabled}")
-    private Boolean test;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -226,7 +222,6 @@ public class OrderController {
 
         Object forObject = restTemplate.getForObject("http://product-module/v2/find?id=" + productId, Object.class);
 
-        System.out.println(test);
         logger.info("/v7/order => 从商品模块查询到查询到 => {}",forObject);
 
         OrderInfo orderInfo = new OrderInfo();
