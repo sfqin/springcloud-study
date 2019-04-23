@@ -1,0 +1,21 @@
+
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/sfqin/springcloud-config
+          username: 你的github账号
+          password: 你的github密码
+          timeout: 5
+          default-label: master
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 9100
+
