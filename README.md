@@ -13,3 +13,4 @@
 11. Zipkin 结合 Sleuth 做链路追踪的可视化界面，Zipkin server 需要官网下载 jar包（springboot 应用）2.0 已经不推荐使用自建项目搭建 Zipkin server，默认是内存存储，可改用其它存储方式，配置采集日制百分比（zipkin上报显示为false，在相关项目中必须都引用的是Zipkin的集成包，不能有项目引用单独的Sleuth包）
 12. config-server 搭建配置中心，启动类需要添加注解 @EnableConfigServer ，还需要配置相应的 git 配置存储地址，验证方式 config-serverip:port/{label}/{service-key}-{profile}.[json|yml|properties]
 13. 业务模块使用 config-client 去 config-server 读取启动配置。1) 添加 config-client 依赖，2) 将 application.yml 更名为 bootstrap.yml，3) 添加必要的配置 注册中心地址、应用名称（用于去git拉配置对应 service-key）、配置中心地址以及拉去的 label 和 profile 的配置
+14. bus-amqp 消息总线的使用，远程配置存储发生改变，触发钩子函数向 mq 中发送通知事件，消息订阅方接收到通知，重新拉去配置。（此项目中通过 actuator 模拟钩子函数）
